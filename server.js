@@ -23,14 +23,17 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
+
+//TimeStamp API endpoint 
 let date;
 app.get("/api/timestamp/:date_string?", function(req, res, next){
-
+  //Check if the date_string is empty and assign today's date to it if empty
   if(req.params.date_string === undefined){
     date = new Date();
   }else{
     date = new Date(req.params.date_string);
   }
+  //JSON returned based on the timestamp value
   if(Date.parse(date) === NaN){
     res.json({"unix": null, "utc" : "Invalid Date"})
   }else{
