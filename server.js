@@ -23,22 +23,26 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
-
-//TimeStamp API endpoint 
 let date;
-app.get("/api/timestamp/:date_string?", function(req, res, next){
-  //Check if the date_string is empty and assign today's date to it if empty
-  if(req.params.date_string === undefined){
-    date = new Date();
-  }else{
-    date = new Date(req.params.date_string);
+app.get("/api/timestamp/", function(req, res){
+  date = new Date();
+  res.json({"unix":date.getTime(), "utc":date.toUTCString()})
+})
+app.get("/api/timestamp/:date_string?", function(req, res){
+  // (isNaN(req.params.date_string) ? res.json({"unix":null, "utc":"Invalid Date"}) : date = new Date(req.params.date_string * 1000))
+  // res.json({"unix":date.getTime(), "utc":date.toUTCString()})
+  let date_string = req.params.date_string;
+  //check if the date string is 5 numbers and above
+  if(/\d{5,}/.test(date_string)){
+    date = new Date(date_string * 1000)
+    res.json({"unix":date_string, "utc":date.toUTCString()})
   }
-  //JSON returned based on the timestamp value
-  if(Date.parse(date) === NaN){
-    res.json({"unix": null, "utc" : "Invalid Date"})
-  }else{
-    res.json({"unix": date.getTime(), "utc" : date.toUTCString() })
+  //if the date is not in UNIX format, then we create a new date object, check if it's valid and return the specified json response
+  date = new Date(date_string)
+  if(date.toString === "Invalid Date"){
+    res.json({"unix":"null","utc":"Invalid Date"})
   }
+  res.json({"unix":date.getTime(), "utc":date.toUTCString()})
 })
 
 // listen for requests :)
