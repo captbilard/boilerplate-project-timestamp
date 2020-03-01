@@ -39,10 +39,11 @@ app.get("/api/timestamp/:date_string?", function(req, res){
   }
   //if the date is not in UNIX format, then we create a new date object, check if it's valid and return the specified json response
   date = new Date(date_string)
-  if(date.toString === "Invalid Date"){
+  if(date.toString() === "Invalid Date"){
     res.json({"error":"Invalid Date"})
+  }else{
+    res.json({"unix":date.getTime(), "utc":date.toUTCString()})
   }
-  res.json({"unix":date.getTime(), "utc":date.toUTCString()})
 })
 
 // listen for requests :)
